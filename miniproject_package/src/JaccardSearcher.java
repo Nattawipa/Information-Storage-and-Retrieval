@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class JaccardSearcher extends Searcher{
+public class JaccardSearcher extends Searcher {
 
 	public JaccardSearcher(String docFilename) {
-		
+
 		/************* YOUR CODE HERE ******************/
 		super(docFilename);
 		/***********************************************/
@@ -21,27 +21,36 @@ public class JaccardSearcher extends Searcher{
 		/************* YOUR CODE HERE ******************/
 		List<String> query = super.tokenize(queryString);
 		List<SearchResult> result = new ArrayList<SearchResult>();
-		Set<String> querySet = setOfString(query);
-		
-		for(int i=0;i<this.documents.size();i++) {
+
+		for (int i = 0; i < this.documents.size(); i++) {
 			double score = 0;
-			Set<String> documentSet = setOfString(this.documents.get(i).getTokens());
+			int unionSize = 0;
+			int intersectSize = 0;
 			if(queryString == "") {
 				result.add(new SearchResult(this.documents.get(i), score));
 			}
+			Set<String> documentSet = setOfString(this.documents.get(i).getTokens());
+			Set<String> querySet = setOfString(query);
+			unionSize = union(querySet, documentSet);
+			querySet.retainAll(documentSet);
+			intersectSize = querySet.size();
+			score = (double)intersectSize / unionSize;
+			result.add(new SearchResult(this.documents.get(i), score));
 		}
-//		System.out.println(this.documents.get(0).getTokens());
 		return result.subList(0, k);
 		/***********************************************/
 	}
-	
-	public Set<String> setOfString(List<String> data){
+
+	public Set<String> setOfString(List<String> data) {
 		Set<String> result1 = new HashSet<String>();
-		data.forEach((word) -> 
-		{
+		data.forEach((word) -> {
 			result1.add(word);
 		});
 		return result1;
 	}
 
+	public int union(Set<String> querySet, Set<String> documentSet) {
+		querySet.addAll(documentSet);
+		return querySet.size();
+	}
 }
