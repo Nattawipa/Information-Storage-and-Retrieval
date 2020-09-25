@@ -3,6 +3,7 @@
 //ID: 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class JaccardSearcher extends Searcher {
 		/***********************************************/
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<SearchResult> search(String queryString, int k) {
 		/************* YOUR CODE HERE ******************/
@@ -37,6 +39,7 @@ public class JaccardSearcher extends Searcher {
 			score = (double)intersectSize / unionSize;
 			result.add(new SearchResult(this.documents.get(i), score));
 		}
+			Collections.sort(result); 
 		return result.subList(0, k);
 		/***********************************************/
 	}
@@ -50,7 +53,9 @@ public class JaccardSearcher extends Searcher {
 	}
 
 	public int union(Set<String> querySet, Set<String> documentSet) {
-		querySet.addAll(documentSet);
-		return querySet.size();
+		Set<String> newSet  = new HashSet<String>();
+		newSet.addAll(querySet);
+		newSet.addAll(documentSet);
+		return newSet.size();
 	}
 }
