@@ -7,9 +7,8 @@ import java.util.List;
 public class TFIDFSearcher extends Searcher
 {	
 	public TFIDFSearcher(String docFilename) {
-		super(docFilename);
 		/************* YOUR CODE HERE ******************/
-		
+		super(docFilename);
 		/***********************************************/
 	}
 	
