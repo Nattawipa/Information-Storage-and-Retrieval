@@ -28,9 +28,11 @@ public class JaccardSearcher extends Searcher {
 			double score = 0;
 			int unionSize = 0;
 			int intersectSize = 0;
+			
 			if(queryString == "") {
 				result.add(new SearchResult(this.documents.get(i), score));
 			}
+			
 			Set<String> documentSet = setOfString(this.documents.get(i).getTokens());
 			Set<String> querySet = setOfString(query);
 			unionSize = union(querySet, documentSet);
@@ -46,6 +48,7 @@ public class JaccardSearcher extends Searcher {
 
 	public Set<String> setOfString(List<String> data) {
 		Set<String> result1 = new HashSet<String>();
+		
 		data.forEach((word) -> {
 			result1.add(word);
 		});
@@ -54,6 +57,7 @@ public class JaccardSearcher extends Searcher {
 
 	public int union(Set<String> querySet, Set<String> documentSet) {
 		Set<String> newSet  = new HashSet<String>();
+		
 		newSet.addAll(querySet);
 		newSet.addAll(documentSet);
 		return newSet.size();
