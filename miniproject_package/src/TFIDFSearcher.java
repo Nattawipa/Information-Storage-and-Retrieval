@@ -13,6 +13,8 @@ public class TFIDFSearcher extends Searcher {
 	private HashSet<String> setIdf;
 	private HashMap<String, Double> allIdf = new HashMap<String, Double>();
 
+	private HashMap<Document, HashMap<String, Double>> vectorDocument = new HashMap<>();
+
 	public TFIDFSearcher(String docFilename) {
 		/************* YOUR CODE HERE ******************/
 		super(docFilename);
@@ -29,6 +31,20 @@ public class TFIDFSearcher extends Searcher {
 		for (String a : allIdf.keySet()) {
 			allIdf.replace(a, Math.log10(1 + (docSize / allIdf.get(a))));
 		}
+
+		for (Document x : this.documents) {
+			HashMap<String, Double> data = new HashMap<>();
+			setIdf = new HashSet<>(x.getTokens());
+			for (String token : setIdf) {
+				int tfFrequency = Collections.frequency(x.getTokens(), token);
+				double idf = allIdf.get(token);
+				double tf = checkCountWord(tfFrequency);
+				double tfIdf = idf * tf;
+				data.put(token, tfIdf);
+			}
+			vectorDocument.put(x, data);
+		}
+
 		/***********************************************/
 	}
 
@@ -46,29 +62,32 @@ public class TFIDFSearcher extends Searcher {
 			return result;
 		}
 
-		for (int document = 0; document < docSize; document++) {
-			List<String> wordsEachDocument = this.documents.get(document).getTokens();
-			double queryTf, documentTf, dotProductResult = 0, vectorQuery = 0, vertorDocument = 0;
-			tokenSet.addAll(this.documents.get(document).getTokens());
+		for (Document doc : this.documents) {
+			double queryTf, dotProductResult = 0, vectorQuery = 0, vertorDocument = 0;
+			tokenSet = new HashSet<String>(queryWords);
+			tokenSet.addAll(doc.getTokens());
 
 			for (String word : tokenSet) {
-				int documentFrequency = Collections.frequency(wordsEachDocument, word);
 				int queryFrequency = Collections.frequency(queryWords, word);
-
-				documentTf = checkCountWord(documentFrequency);
+				Double docTfidf = vectorDocument.get(doc).get(word);
+				if (docTfidf == null) {
+					docTfidf = 0.0;
+				}
 				queryTf = checkCountWord(queryFrequency);
-
-				dotProductResult += (queryTf * allIdf.get(word)) * (documentTf * allIdf.get(word));
-				vectorQuery += Math.pow(queryTf * allIdf.get(word), 2.0);
-				vertorDocument += Math.pow(documentTf * allIdf.get(word), 2.0);
+				Double queryidf = allIdf.get(word);
+				if (queryidf == null) {
+					queryidf = 0.0;
+				}
+				dotProductResult += (queryTf * queryidf) * docTfidf;
+				vectorQuery += Math.pow(queryTf * queryidf, 2.0);
+				vertorDocument += Math.pow(docTfidf, 2.0);
 			}
 			double SqrtQM = Math.sqrt(vectorQuery) * Math.sqrt(vertorDocument);
 			double score = dotProductResult / SqrtQM;
-			result.add(new SearchResult(this.documents.get(document), score));
+			result.add(new SearchResult(doc, score));
 		}
-		Collections.sort(result);
-		return result.subList(0, k);
-		/***********************************************/
+		Collections.sort(result, SearchResult::compareTo);
+		return result.subList(0, k);/***********************************************/
 	}
 
 	public double checkCountWord(int countWord) {

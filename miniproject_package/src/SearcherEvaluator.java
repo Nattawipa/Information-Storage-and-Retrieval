@@ -73,18 +73,20 @@ public class SearcherEvaluator {
 		double precision, recall, f1Score = 0;
 		List<SearchResult> searchResult = searcher.search(query.getRawText(), k);
 		Set<Integer> relevantId = getAnswers().get(query.getId());
-		Set<Integer> relevantRetrievedId = getAnswers().get(query.getId());
 		Set<Integer> retrievedId = new HashSet<Integer>();
+		Set<Integer> intersection = new HashSet<>(relevantId);
 
 		searchResult.forEach((data) -> {
 			retrievedId.add(data.getDocument().getId());
 		});
 
-		retrievedId.removeAll(relevantId);
+		intersection.retainAll(retrievedId);
+		int intersectionSize = intersection.size();
 		int retrievedIdSize = retrievedId.size();
 		int relevantIdSize = relevantId.size();
-		precision = (retrievedIdSize * 1.0) / (retrievedIdSize * 1.0);
-		recall = (relevantIdSize * 1.0) / (relevantIdSize * 1.0);
+
+		precision = (intersectionSize * 1.0) / (retrievedIdSize * 1.0);
+		recall = (intersectionSize * 1.0) / (relevantIdSize * 1.0);
 		f1Score = 2.0 * ((precision * recall) / (precision + recall));
 
 		if (Double.isNaN(f1Score)) {
