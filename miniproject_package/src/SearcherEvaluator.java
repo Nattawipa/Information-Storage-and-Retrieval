@@ -70,8 +70,28 @@ public class SearcherEvaluator {
 	 */
 	public double[] getQueryPRF(Document query, Searcher searcher, int k) {
 		/*********************** YOUR CODE HERE *************************/
+		double precision, recall, f1Score = 0;
+		List<SearchResult> searchResult = searcher.search(query.getRawText(), k);
+		Set<Integer> relevantId = getAnswers().get(query.getId());
+		Set<Integer> relevantRetrievedId = getAnswers().get(query.getId());
+		Set<Integer> retrievedId = new HashSet<Integer>();
 
-		return null;
+		searchResult.forEach((data) -> {
+			retrievedId.add(data.getDocument().getId());
+		});
+
+		retrievedId.removeAll(relevantId);
+		int retrievedIdSize = retrievedId.size();
+		int relevantIdSize = relevantId.size();
+		precision = (retrievedIdSize * 1.0) / (retrievedIdSize * 1.0);
+		recall = (relevantIdSize * 1.0) / (relevantIdSize * 1.0);
+		f1Score = 2.0 * ((precision * recall) / (precision + recall));
+
+		if (Double.isNaN(f1Score)) {
+			f1Score = 0;
+		}
+		double result[] = { precision, recall, f1Score };
+		return result;
 		/****************************************************************/
 	}
 
@@ -85,7 +105,26 @@ public class SearcherEvaluator {
 	 */
 	public double[] getAveragePRF(Searcher searcher, int k) {
 		/*********************** YOUR CODE HERE *************************/
-		return null;
+		double avgPrecision = 0, avgRecall = 0, avgF1Score = 0;
+		for (Document data : this.queries) {
+			Document Q = data;
+			double[] results = getQueryPRF(Q, searcher, k);
+			avgPrecision += results[0];
+			avgRecall += results[1];
+			avgF1Score += results[2];
+		}
+		int queriesSize = this.queries.size();
+		avgPrecision = avgPrecision / queriesSize;
+		avgRecall = avgRecall / queriesSize;
+		avgF1Score = avgF1Score / queriesSize;
+
+		if (Double.isNaN(avgF1Score)) {
+			avgF1Score = 0;
+		}
+
+		double[] finalResult = { avgPrecision, avgRecall, avgF1Score };
+
+		return finalResult;
 		/****************************************************************/
 	}
 }

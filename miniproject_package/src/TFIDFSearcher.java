@@ -38,29 +38,29 @@ public class TFIDFSearcher extends Searcher {
 
 		List<String> queryWords = super.tokenize(queryString);
 		List<SearchResult> result = new ArrayList<SearchResult>();
-		HashSet<String> tokenSet = new HashSet<>(queryWords);
+		HashSet<String> tokenSet = new HashSet<String>(queryWords);
 		if (queryString.isEmpty()) {
 			for (int i = 0; i < k; i++) {
 				result.add(new SearchResult(documents.get(i), Double.NaN));
 			}
 			return result;
 		}
+
 		for (int document = 0; document < docSize; document++) {
-			HashMap<String, Double> termFreqTF = new HashMap<String, Double>();
 			List<String> wordsEachDocument = this.documents.get(document).getTokens();
-			double queryTf, documentTf, tfidf, dotProductResult = 0, vectorQuery = 0, vertorDocument = 0;
+			double queryTf, documentTf, dotProductResult = 0, vectorQuery = 0, vertorDocument = 0;
 			tokenSet.addAll(this.documents.get(document).getTokens());
 
-			for (String token : tokenSet) {
-				int documentFrequency = Collections.frequency(wordsEachDocument, token);
-				int queryFrequency = Collections.frequency(queryWords, token);
+			for (String word : tokenSet) {
+				int documentFrequency = Collections.frequency(wordsEachDocument, word);
+				int queryFrequency = Collections.frequency(queryWords, word);
 
 				documentTf = checkCountWord(documentFrequency);
 				queryTf = checkCountWord(queryFrequency);
 
-				dotProductResult += (queryTf * allIdf.get(token)) * (documentTf * allIdf.get(token));
-				vectorQuery += Math.pow(queryTf * allIdf.get(token), 2.0);
-				vertorDocument += Math.pow(documentTf * allIdf.get(token), 2.0);
+				dotProductResult += (queryTf * allIdf.get(word)) * (documentTf * allIdf.get(word));
+				vectorQuery += Math.pow(queryTf * allIdf.get(word), 2.0);
+				vertorDocument += Math.pow(documentTf * allIdf.get(word), 2.0);
 			}
 			double SqrtQM = Math.sqrt(vectorQuery) * Math.sqrt(vertorDocument);
 			double score = dotProductResult / SqrtQM;
