@@ -1,0 +1,42 @@
+
+ul {
+    list-style-type: none;
+    margin: 0; /*Set margin*/
+    padding: 0; /*Set padding*/
+    overflow: hidden;
+    background-color: #303841;/*Set background color*/
+}
+
+li {
+    float: left; /*Let the elements float to left side*/
+}
+
+p {
+    text-align: center; /*Set every paragraph to be on center*/
+}
+
+.card {  /*Card section use to put contents in there*/
+    background-color: #ffffff; /*Set backgorund color*/
+    padding: 20px; /*Set padding*/
+}
+
+#head {
+    background-color: #373A36; /*Set backgorund color in header of card class*/
+}
+
+
+.card img {  /*Img in class card (Most of the image that use in websize using size by this format)*/ 
+    display: block; /*Set display property to block*/
+    margin: 0 auto; /*Set margin*/
+    height: auto; /*Set height*/
+    width: 45%; /*Set width*/
+    border-radius: 15px; /*Set boarder radius*/
+}
+
+footer {
+    padding: 1px; /*Set padding*/
+    text-align: center; /*Set text to be on center*/
+    font-family: Verdana; /*Set font face*/
+    background-color: #373A36; /*Set background color*/
+    color: white; /*Set font color*/
+}
