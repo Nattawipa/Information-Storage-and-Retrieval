@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <div class="flex">
       <div class="cnk">
         CNK SEARCH
@@ -7,34 +7,43 @@
       <input v-model="name" type="text" placeholder="search..." />
       <button @click="search()" class="btn">Search</button>
     </div>
-      <card  v-for="({_source},index) in this.data  "
-      :key="`-${index}`" :name="_source.name" :description="_source.description" :ingredients="Array(_source.ingredients)"
-      :numberOfIngredients="_source.number_of_ingredients" :nuumber_of_steps="_source.nuumber_of_steps" :steps="_source.steps" />
+    <card
+      v-for="({ _source }, index) in this.data"
+      :key="`-${index}`"
+      :name="_source.name"
+      :description="_source.description"
+      :ingredients="_source.ingredients"
+      :numberOfIngredients="_source.number_of_ingredients"
+      :nuumber_of_steps="_source.nuumber_of_steps"
+      :steps="_source.steps"
+    />
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import card from './components/card.vue'
+import card from "./components/card.vue";
 export default {
   data() {
     return {
       name: "",
-      data:[]
+      data: [],
     };
   },
-  name: 'App',
+  name: "App",
   components: {
-    card
+    card,
   },
   methods: {
-    search:async function(){
-      const {data} = await axios.post("http://localhost:8081",{name:this.name})
-      this.data = data.body.hits.hits
-      console.log(this.data)
+    search: async function() {
+      const { data } = await axios.post("http://localhost:8081", {
+        name: this.name,
+      });
+      this.data = data.body.hits.hits;
+      console.log(this.data);
+    },
   },
-}
-}
+};
 </script>
 
 <style>
